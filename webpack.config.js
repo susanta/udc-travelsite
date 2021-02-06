@@ -3,6 +3,7 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const postCSSPlugins = [
   require('postcss-import'),
@@ -26,6 +27,12 @@ let cssConfig = {
 
 let config = {
   entry: './app/assets/scripts/App.js',
+  plugins: [
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: './app/index.html',
+    }),
+  ],
   module: {
     rules: [cssConfig],
   },
@@ -60,6 +67,7 @@ if (currentTask == 'build') {
   config.optimization = {
     splitChunks: {
       chunks: 'all',
+      minSize: 1000,
     },
     minimize: true,
     minimizer: [
@@ -68,10 +76,10 @@ if (currentTask == 'build') {
       new CssMinimizerPlugin(),
     ],
   };
-  config.plugins = [
+  config.plugins.push(
     new CleanWebpackPlugin(),
-    new MiniCssExtractPlugin({ filename: 'styles.[chunkhash].css' }),
-  ];
+    new MiniCssExtractPlugin({ filename: 'styles.[chunkhash].css' })
+  );
 }
 
 module.exports = config;
